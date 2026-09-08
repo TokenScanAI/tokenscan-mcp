@@ -1,0 +1,2 @@
+[console_scripts]
+tokenscan-mcp = tokenscan_mcp.server:main

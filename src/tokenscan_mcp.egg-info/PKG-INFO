@@ -1,0 +1,43 @@
+Metadata-Version: 2.4
+Name: tokenscan-mcp
+Version: 0.1.0
+Summary: MCP server for TokenAPI Scan - Verify AI API relay services
+Author: TokenAPI Scan
+License: MIT
+Project-URL: Homepage, https://tokenscanai.com
+Project-URL: Repository, https://github.com/TokenScanAI/tokenscan-mcp
+Keywords: mcp,mcp-server,mcp-tools,ai-api,relay,verification,tokenapi
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: mcp>=1.0.0
+Requires-Dist: httpx>=0.27.0
+
+# TokenAPI Scan MCP Server
+
+MCP server for verifying AI API relay services. Query real-time verification status, success rates, and trust data for 180+ relay providers.
+
+## Tools
+
+### `verify_relay`
+Check if a relay site is verified and get its trust level.
+
+### `search_relays`
+Search for relay sites by name or keyword.
+
+### `relay_details`
+Get detailed verification statistics for a relay.
+
+## Usage with Claude Code
+
+```json
+{
+  "mcpServers": {
+    "tokenscan": {
+      "command": "uvx",
+      "args": ["tokenscan-mcp"]
+    }
+  }
+}
+```
+
+Or install directly: `pip install tokenscan-mcp`

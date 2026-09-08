@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tokenscan-mcp"
+version = "0.1.0"
+description = "MCP server for TokenAPI Scan - Verify AI API relay services"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "TokenAPI Scan"}]
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+    "httpx>=0.27.0",
+]
+keywords = ["mcp", "mcp-server", "mcp-tools", "ai-api", "relay", "verification", "tokenapi"]
+
+[project.urls]
+Homepage = "https://tokenscanai.com"
+Repository = "https://github.com/TokenScanAI/tokenscan-mcp"
+
+[project.scripts]
+tokenscan-mcp = "tokenscan_mcp.server:main"
