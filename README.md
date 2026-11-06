@@ -1,6 +1,6 @@
 # TokenAPI Scan MCP Server
 
-MCP server for verifying AI API relay services. Query real-time verification status, success rates, and trust data for 180+ relay providers.
+MCP server for verifying AI API relay services. Query real-time verification status, success rates, and trust data for 240+ relay providers.
 
 ## Tools
 
