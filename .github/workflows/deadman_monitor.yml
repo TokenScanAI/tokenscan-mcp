@@ -1,0 +1,44 @@
+name: Dead-man monitor (tokenscanai.com)
+
+# 外部活体监控（dead-man switch）：从 GitHub 境外节点每 30 分钟探测
+# tokenscanai.com 的 边缘→隧道→源站 全链路。整机死/隧道断/源站挂，
+# 这里的 workflow run 会变红并按 GitHub 通知设置触达维护者。
+# 本仓库不承载站点功能，纯运维用，选它只是因为它已有 GitHub 仓库。
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe edge->tunnel->origin chain
+        run: |
+          set -uo pipefail
+          fail=0
+          for path in "/" "/healthz" "/prices"; do
+            code=$(curl -sS -o /dev/null -m 25 -w '%{http_code}' \
+              -A "TokenAPIScan-DeadMan/1.0" \
+              "https://tokenscanai.com${path}" 2>/dev/null || echo "000")
+            echo "${path} -> HTTP ${code}"
+            case "$code" in
+              200|301|302) ;;
+              *) fail=1 ;;
+            esac
+            sleep 2
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::tokenscanai.com unreachable from external vantage at $(date -u '+%FT%TZ') (edge/tunnel/origin chain broken)"
+          fi
+          exit $fail
+
+      - name: Failure hint
+        if: failure()
+        run: |
+          echo "🚨 3 条路径全部失败 = 站点不可达（CF 边缘 / cloudflared 隧道 / 源站 tokenapi-scan.service 任一断链）。"
+          echo "排查入口：源站 systemctl status tokenapi-scan → 隧道 pgrep cloudflared → 边缘 cf_tunnel_health 历史。"
