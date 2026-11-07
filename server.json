@@ -1,0 +1,34 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.TokenScanAI/tokenscan-mcp",
+  "title": "TokenAPI Scan — AI API Relay Trust Verification",
+  "description": "Verify AI API relay services (CN relay catalog): real-time trust level from cryptographic model-authenticity detection, searchable provider directory with price floor data. Independent third-party, no paid placement. Backed by https://tokenscanai.com public API.",
+  "version": "0.2.0",
+  "websiteUrl": "https://tokenscanai.com",
+  "repository": {
+    "url": "https://github.com/TokenScanAI/tokenscan-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "tokenscan-mcp",
+      "version": "0.1.0",
+      "environmentVariables": [
+        {
+          "description": "Optional: tokenscanai.com API base (defaults to https://tokenscanai.com)",
+          "name": "TOKENSCAN_API_BASE",
+          "isRequired": false
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "license": "MIT",
+      "contact": "team@tokenscanai.com",
+      "independence": "We do not operate any AI API relay and do not accept paid placement or sponsorship.",
+      "tools": ["verify_relay", "search_relays", "relay_details"]
+    }
+  }
+}
