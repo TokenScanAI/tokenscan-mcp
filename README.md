@@ -20,10 +20,10 @@ Get detailed verification statistics for a relay.
   "mcpServers": {
     "tokenscan": {
       "command": "uvx",
-      "args": ["tokenscan-mcp"]
+      "args": ["--from", "git+https://github.com/TokenScanAI/tokenscan-mcp.git", "tokenscan-mcp"]
     }
   }
 }
 ```
 
-Or install directly: `pip install tokenscan-mcp`
+Or install directly: `pip install git+https://github.com/TokenScanAI/tokenscan-mcp.git`
