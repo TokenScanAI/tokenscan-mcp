@@ -10,13 +10,28 @@ from typing import Any
 
 import httpx
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 API_BASE = os.environ.get("TOKENSCAN_API_BASE", "https://tokenscanai.com")
 TIMEOUT = 15.0
 VERSION = "0.2.0"
 
+# host 默认 127.0.0.1 会触发 SDK 的 localhost-only DNS 重绑定防护（外部访问 421）
+# 显式放行公网域名 + localhost；本 server 为纯只读、无鉴权、无用户数据
 mcp = FastMCP(
     "TokenAPI Scan",
+    streamable_http_path="/",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=[
+            "tokenscanai.com:*", "www.tokenscanai.com:*", "index.tokenscanai.dpdns.org:*",
+            "127.0.0.1:*", "localhost:*", "[::1]:*",
+        ],
+        allowed_origins=[
+            "https://tokenscanai.com", "https://www.tokenscanai.com",
+            "http://127.0.0.1:*", "http://localhost:*",
+        ],
+    ),
 )
 
 

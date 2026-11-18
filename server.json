@@ -9,15 +9,16 @@
     "url": "https://github.com/TokenScanAI/tokenscan-mcp",
     "source": "github"
   },
-  "packages": [
+  "packages": [],
+  "remotes": [
     {
-      "registryType": "pypi",
-      "identifier": "tokenscan-mcp",
-      "version": "0.2.0",
-      "environmentVariables": [
+      "type": "streamable-http",
+      "url": "https://tokenscanai.com/mcp/",
+      "headers": [
         {
-          "description": "Optional: tokenscanai.com API base (defaults to https://tokenscanai.com)",
-          "name": "TOKENSCAN_API_BASE",
+          "description": "Optional: tokenscanai.com API base override is not needed for the remote server",
+          "name": "Accept",
+          "value": "application/json, text/event-stream",
           "isRequired": false
         }
       ]
