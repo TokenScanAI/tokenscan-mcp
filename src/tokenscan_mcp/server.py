@@ -13,6 +13,7 @@ from mcp.server.fastmcp import FastMCP
 
 API_BASE = os.environ.get("TOKENSCAN_API_BASE", "https://tokenscanai.com")
 TIMEOUT = 15.0
+VERSION = "0.2.0"
 
 mcp = FastMCP(
     "TokenAPI Scan",
@@ -25,7 +26,7 @@ async def _api_get(path: str) -> dict[str, Any] | None:
         async with httpx.AsyncClient(timeout=TIMEOUT, follow_redirects=True) as client:
             resp = await client.get(
                 f"{API_BASE}{path}",
-                headers={"User-Agent": "tokenscan-mcp/0.1.0", "Accept": "application/json"},
+                headers={"User-Agent": f"tokenscan-mcp/{VERSION}", "Accept": "application/json"},
             )
             if resp.status_code == 200:
                 return resp.json()
@@ -156,6 +157,74 @@ async def relay_details(relay_id: str) -> str:
             return json.dumps(exact[0], indent=2, ensure_ascii=False)
 
     return f"No detailed data found for '{relay_id}'."
+
+
+@mcp.tool(
+    name="list_free_quotas",
+    description="List free-tier token/credit offers published by AI model providers (Google Gemini, DeepSeek, Kimi, GLM, etc). Filterable by vendor or cadence. Verified daily by independent checks — never fabricated, expired offers are pulled from the list.",
+)
+async def list_free_quotas(vendor: str = "", cadence: str = "", limit: int = 15) -> str:
+    """List verified free-quota offers from AI model providers.
+
+    Args:
+        vendor: Optional vendor filter (e.g. 'Google', 'DeepSeek', 'Kimi', 'GLM')
+        cadence: Optional cadence filter ('onboarding', 'daily', 'monthly', ...)
+        limit: Max entries to return (default 15, max 50)
+    """
+    data = await _api_get("/api/free-quota.json")
+    if not data or not data.get("items"):
+        return "Free-quota data unavailable right now. Try again later."
+    items = data["items"]
+    if vendor:
+        items = [i for i in items if vendor.lower() in (i.get("vendor", "") + " " + i.get("title", "")).lower()]
+    if cadence:
+        items = [i for i in items if i.get("cadence", "").lower() == cadence.lower()]
+    total = len(items)
+    items = items[: min(max(limit, 1), 50)]
+    lines = [f"Verified free-quota offers ({total} match, showing {len(items)}; dataset generated {data.get('generated_at', '?')[:10]}):"]
+    for i in items:
+        val = i.get("value_usd") or i.get("value_cny")
+        val_str = f"~{val}" if val is not None else "value stated on page"
+        claim = i.get("claim_url") or "see provider page"
+        lines.append(
+            f"  - [{i.get('vendor', '?')}] {i.get('title', '?')} | quota: {i.get('quota', '?')} | "
+            f"cadence: {i.get('cadence', '?')} | value: {val_str} | verified: {i.get('verified_at', '?')} | claim: {claim}"
+        )
+    return "\n".join(lines)
+
+
+@mcp.tool(
+    name="get_relay_catalog",
+    description="Query the CN relay-catalog data node: 240+ AI API relay providers with trust level (from cryptographic model-authenticity detection), price floor, region and category. Filterable by category or keyword.",
+)
+async def get_relay_catalog(category: str = "", query: str = "", limit: int = 20) -> str:
+    """Query the relay-catalog dataset.
+
+    Args:
+        category: Optional category filter ('claude-relay', '候选中转', '中文服务区中转', ...)
+        query: Optional keyword matched against name/provider_id/endpoint
+        limit: Max entries to return (default 20, max 50)
+    """
+    data = await _api_get("/data/relay-catalog.json")
+    if not data:
+        return "Relay-catalog data unavailable right now. Try again later."
+    entries = data.get("relays") or data.get("entries") or []
+    if query:
+        q = query.lower()
+        entries = [e for e in entries if q in json.dumps(e, ensure_ascii=False).lower()]
+    if category:
+        entries = [e for e in entries if e.get("category", "").lower() == category.lower()]
+    total = len(entries)
+    entries = entries[: min(max(limit, 1), 50)]
+    lines = [f"Relay catalog ({total} match, showing {len(entries)}):"]
+    for e in entries:
+        trust = (e.get("trust") or {}).get("verified", "?")
+        floor = (e.get("prices") or {}).get("min_input_usd_per_1m")
+        floor_str = f"${floor}/1M in" if floor is not None else "price N/A"
+        lines.append(
+            f"  - {e.get('name', '?')} [{e.get('category', '?')}] trust={trust} | {floor_str} | {e.get('endpoint', '')}"
+        )
+    return "\n".join(lines)
 
 
 def main() -> None:

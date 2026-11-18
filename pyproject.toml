@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tokenscan-mcp"
-version = "0.1.0"
-description = "MCP server for TokenAPI Scan - Verify AI API relay services"
+version = "0.2.0"
+description = "MCP server for TokenAPI Scan - Verify AI API relay services, search verified free-tier offers, and query the CN relay catalog"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [{name = "TokenAPI Scan"}]

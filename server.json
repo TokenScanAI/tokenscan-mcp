@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "tokenscan-mcp",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "environmentVariables": [
         {
           "description": "Optional: tokenscanai.com API base (defaults to https://tokenscanai.com)",
@@ -28,7 +28,7 @@
       "license": "MIT",
       "contact": "team@tokenscanai.com",
       "independence": "We do not operate any AI API relay and do not accept paid placement or sponsorship.",
-      "tools": ["verify_relay", "search_relays", "relay_details"]
+      "tools": ["verify_relay", "search_relays", "relay_details", "list_free_quotas", "get_relay_catalog"]
     }
   }
 }
