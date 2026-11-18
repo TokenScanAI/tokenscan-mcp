@@ -24,8 +24,10 @@ mcp = FastMCP(
     transport_security=TransportSecuritySettings(
         enable_dns_rebinding_protection=True,
         allowed_hosts=[
-            "tokenscanai.com:*", "www.tokenscanai.com:*", "index.tokenscanai.dpdns.org:*",
-            "127.0.0.1:*", "localhost:*", "[::1]:*",
+            "tokenscanai.com", "tokenscanai.com:*",
+            "www.tokenscanai.com", "www.tokenscanai.com:*",
+            "index.tokenscanai.dpdns.org", "index.tokenscanai.dpdns.org:*",
+            "127.0.0.1", "127.0.0.1:*", "localhost", "localhost:*", "[::1]", "[::1]:*",
         ],
         allowed_origins=[
             "https://tokenscanai.com", "https://www.tokenscanai.com",
